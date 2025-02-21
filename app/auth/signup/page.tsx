@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { validateEmail } from "@/lib/utils/validateEmail";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
@@ -17,8 +19,37 @@ export default function SignUp() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    if (newEmail) {
+      const { isValid, message } = validateEmail(newEmail, isAdmin);
+      setEmailError(isValid ? "" : message);
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleAdminChange = (checked: boolean) => {
+    setIsAdmin(checked);
+    if (email) {
+      const { isValid, message } = validateEmail(email, checked);
+      setEmailError(isValid ? "" : message);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const emailValidation = validateEmail(email, isAdmin);
+    if (!emailValidation.isValid) {
+      toast({
+        title: "Invalid Email",
+        description: emailValidation.message,
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (password !== confirmPassword) {
       toast({
@@ -79,9 +110,24 @@ export default function SignUp() {
                 id='email'
                 type='email'
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
+                placeholder={
+                  isAdmin
+                    ? "admin@example.com"
+                    : "*************@cse.bubt.edu.bd"
+                }
                 required
+                className={emailError ? "border-red-500" : ""}
               />
+              {emailError ? (
+                <p className='text-sm text-red-500'>{emailError}</p>
+              ) : (
+                <p className='text-sm text-muted-foreground'>
+                  {isAdmin
+                    ? "Only authorized admin emails are allowed"
+                    : "Format: YearBatchSeriesNumber@cse.bubt.edu.bd"}
+                </p>
+              )}
             </div>
             <div className='space-y-2'>
               <label htmlFor='name' className='text-sm font-medium'>
@@ -92,6 +138,7 @@ export default function SignUp() {
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </div>
             <div className='space-y-2'>
@@ -122,7 +169,7 @@ export default function SignUp() {
               <Checkbox
                 id='isAdmin'
                 checked={isAdmin}
-                onCheckedChange={(checked) => setIsAdmin(checked as boolean)}
+                onCheckedChange={handleAdminChange}
               />
               <label
                 htmlFor='isAdmin'

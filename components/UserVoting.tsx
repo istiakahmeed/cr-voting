@@ -47,26 +47,44 @@ export function UserVoting({ candidates, votedFor, onVote }: UserVotingProps) {
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-        {candidates.map((candidate: Candidate) => (
-          <Card key={candidate.id}>
-            <CardHeader>
-              <CardTitle>{candidate.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className='mb-4'>{candidate.description}</p>
-              <div className='flex justify-between items-center'>
-                <span>Votes: {candidate._count.votes}</span>
-                <Button
-                  onClick={() => onVote(candidate.id)}
-                  disabled={!!votedFor}
-                  variant={votedFor === candidate.id ? "secondary" : "default"}
-                >
-                  {votedFor === candidate.id ? "Voted" : "Vote"}
-                </Button>
-              </div>
-            </CardContent>
+        {candidates.length === 0 ? (
+          <Card className='w-full p-6'>
+            <div className='text-center space-y-2'>
+              <h2 className='text-2xl font-semibold text-gray-700'>
+                No Candidates Available
+              </h2>
+              <p className='text-gray-500'>
+                There are currently no candidates registered for voting. Please
+                check back later.
+              </p>
+            </div>
           </Card>
-        ))}
+        ) : (
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {candidates.map((candidate: Candidate) => (
+              <Card key={candidate.id}>
+                <CardHeader>
+                  <CardTitle>{candidate.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className='mb-4'>{candidate.description}</p>
+                  <div className='flex justify-between items-center'>
+                    <span>Votes: {candidate._count.votes}</span>
+                    <Button
+                      onClick={() => onVote(candidate.id)}
+                      disabled={!!votedFor}
+                      variant={
+                        votedFor === candidate.id ? "secondary" : "default"
+                      }
+                    >
+                      {votedFor === candidate.id ? "Voted" : "Vote"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
