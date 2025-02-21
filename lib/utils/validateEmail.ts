@@ -30,11 +30,20 @@ export const validateEmail = (
     };
   }
 
-  const pattern = /^20\d{2}5[0-9]\d{5}$/;
+  const pattern = /^20255203\d{3}$/;
   if (!pattern.test(studentId)) {
     return {
       isValid: false,
       message: "Invalid student ID format",
+    };
+  }
+
+  // Check if the ID is within the allowed range
+  const lastThreeDigits = parseInt(studentId.slice(-3));
+  if (lastThreeDigits < 1 || lastThreeDigits > 41) {
+    return {
+      isValid: false,
+      message: "Student ID must be between 20255203001 and 20255203041",
     };
   }
 

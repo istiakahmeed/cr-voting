@@ -4,10 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { validateEmail } from "@/lib/utils/validateEmail";
+import Link from "next/link";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -183,6 +190,17 @@ export default function SignUp() {
             </Button>
           </form>
         </CardContent>
+        <CardFooter className='flex justify-center'>
+          <p className='text-sm text-gray-600'>
+            Don&apos;t have an account?{" "}
+            <Link
+              href='/auth/signin'
+              className='text-blue-600 hover:text-blue-700 font-medium'
+            >
+              Sign In
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
